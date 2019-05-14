@@ -7,7 +7,7 @@ void update_state();
 
 void update_beat();
 
-bool is_rising_pitch(int value);
+bool is_high_pitch(int value);
 
 bool is_computing(int value);
 

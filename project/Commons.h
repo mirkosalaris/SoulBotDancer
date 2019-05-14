@@ -1,6 +1,40 @@
+/*
+ * This file contains configuration parameters and variables which are globally shared
+ */
+
 #ifndef COMMONS
 #define COMMONS
 
+#include <Servo.h>
+
+/*** ARDUINO SCHEMATICS ***/
+const int FRANKLIN_PIN = 9;
+const int FRANKLIN_ARMS_PIN = 10;
+const int ARETHA_PIN = 11;
+const int ARETHA_ARMS_PIN = 12;
+
+const int AUDIO_PIN = 0;
+
+/*** SAMPLING ***/
+const int SAMPLE_PERIOD = 200; // sample rate = 5000hz
+
+/*** BEAT CALCULATION ***/
+const float BEAT_THRESH = 10.f;
+const int MIN_BEAT_DISTANCE = 100*1000; // 100ms == 100 000us
+const int BEAT_AVG_N = 30; // number of beats distances from which to compute the avg. distance
+
+/*** HIGH PITCH CALCULATION ***/
+const int LOCAL_P_AVG_N = 100;    // number of values to consider for the computation of the "local" pitch moving average
+const int GLOBAL_P_AVG_N = 5000;  // number of values to consider for the computation of the "global" pitch moving average
+
+
+/*** MOVEMENT ***/
+const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
+const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
+const unsigned long int MOVEMENT_TIME = 500*1000; // 500ms == 500 000us
+
+
+/*** GLOBAL VARIABLES ***/
 enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};
 /* the state in which we are at the current moment. 
  * - NO_MUSIC:  when the music is off (and we have to interact with the user)
@@ -13,19 +47,10 @@ enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};
  */
 
 extern state STATE;
-
-/*** Sampling ***/
-const int SAMPLE_RATE = 5000; 
-
-/*** Beat Calculation ***/
-
-/*** Rising Pitch calculation ***/
-const int RP_N = 50;        // number of values to consider to compute the average for the Rising Pitch calculation
-const int PREV_P_AV_N = 3;  // number of previous averages we keep to compare with the current Pitch average
-const int PREV_P_AV_COEFF = 0.99; // coefficient of reduction, multiplied by the previous averages in rising Pitch calculation
-
-/*** Movement parameters ***/ 
-const int MAX_ANGLE = 120;  // we can adjust this for aesthetic reasons
-const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
+extern unsigned long int next_beat_time;
+extern Servo franklin;      // franklin body servo motor
+extern Servo aretha;        // aretha body servo motor
+extern Servo franklin_arms; // franklin arms servo motor
+extern Servo aretha_arms;   // aretha arms servo motor
 
 #endif

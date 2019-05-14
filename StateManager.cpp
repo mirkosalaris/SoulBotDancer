@@ -1,3 +1,5 @@
+#include "StateManager.h"
+
 extern state STATE;
 
 /*
@@ -6,8 +8,7 @@ extern state STATE;
  * Look at the 'enum state' for a description of the different states.
  */
 void update_state() {
-  /* TODO
-  int value = ...;
+  /*int value = ...;
 
   if (is_music_off(value)) {
     STATE = NO_MUSIC;
@@ -17,8 +18,7 @@ void update_state() {
     STATE = HIGH_PITCH;
   } else { // then just beat!
     STATE = BEAT;
-  }
-  */
+  }*/
 }
 
 /*
@@ -36,14 +36,7 @@ void update_beat() {
   
 }
 
-boolean is_rising_pitch(int value) {
-  /* TODO:
-   *  - keep track of previous values and check if the pitch is rising
-   *  - avoid flickering using a moving average or counting number of increasing values in the last tot samples
-   */
-}
-
-boolean is_computing(int value) {
+bool is_computing(int value) {
   /* TODO:
    *  - if already surpassed this phase, then return false
    *  - be sure to return true for a few seconds after music is on
@@ -53,7 +46,7 @@ boolean is_computing(int value) {
 
 }
 
-boolean is_music_off(int value) {
+bool is_music_off(int value) {
   /* TODO: manage both the start and the end
    *  - just check the overall volume, but avoid 'flickering'
    */

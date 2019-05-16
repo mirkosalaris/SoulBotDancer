@@ -10,6 +10,12 @@
 enum direction {up, down};
 direction dir;
 
+//Values for the servos delay
+float coeff=255.f/float(255);
+float delay1=1000*coeff;
+float delay2=500*coeff;
+
+
 void high_pitch_action() {
   // TODO: raise the arms
   
@@ -50,5 +56,22 @@ void no_music_action() {
 
 void computing_action() {
   // TODO: maybe implement a few strategies to fill the delay
+  
+  //Stretching movements for robot aretha
+  //The robot rotates  0-90-0 and then 180-90-180 with rising and lowering hands
+  aretha.write(0);
+  delay(delay1);
+  aretha.write(90);
+  delay(delay2);
+  aretha.write(0);
+  delay(delay2);
+  aretha_arms.write(120); //rising hands
+  aretha.write(180);
+  delay(delay1);
+  aretha.write(90);
+  delay(delay2);
+  aretha.write(180);
+  delay(delay2);
+  aretha_arms.write(0); //lowering hands
   
 }

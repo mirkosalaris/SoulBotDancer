@@ -33,6 +33,14 @@ const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
 const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
 const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
 
+const int TIME1 = 1000; // 1 sec
+const int TIME2 = 1500;
+const int TIME3 = 2000;
+const int TIME4 = 3000;
+const int TIME5 = 3500;
+const int TIME6 = 4000;
+const unsigned long int COMPUTING_TIME = 4500000; // 4.5 sec
+
 
 /*** GLOBAL VARIABLES ***/
 enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};

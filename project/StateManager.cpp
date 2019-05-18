@@ -16,9 +16,7 @@ unsigned long int next_beat_time = 0;
  * Look at the 'enum state' for a description of the different states.
  */
 void update_state() {
-  // TODO: this is just temporary, to at least test the beat detection algorithm
-  STATE = BEAT;
-  /*int value = (float)analogRead(AUDIO_PIN) - 519.f;
+  int value = (float)analogRead(AUDIO_PIN) - 519.f;
 
   if (is_music_off(value)) {
     STATE = NO_MUSIC;
@@ -28,7 +26,7 @@ void update_state() {
     STATE = HIGH_PITCH;
   } else { // then just beat!
     STATE = BEAT;
-  }*/
+  }
 }
 
 /*
@@ -101,6 +99,8 @@ void update_beat() {
 }
 
 bool is_high_pitch(int value) {
+  return false; // TODO remove this
+  
   // TODO: keep track of the last local and global values and compare the two moving averages
   // keep track of the last read values
   static float last_local_values[LOCAL_P_AVG_N];
@@ -137,13 +137,25 @@ bool is_high_pitch(int value) {
 
 bool is_computing(int value) {
   /* TODO:
-   *  - if already surpassed this phase, then return false
    *  - be sure to return true for a few seconds after music is on
    *    (to guarantee a coherence in the behavior of the robot, always 'act' at least)
    *  - continue to return true until we have a defined beat
    */
-  return false;
 
+  // if already surpassed this phase, then we are surely not inside it (ASK PROFESSOR: are we sure? )
+  static boolean surpassed = false;
+  if (surpassed) {
+    return false;
+  }
+  
+  if (micros() > COMPUTING_TIME) {
+    Serial.println("surpassed now");
+    surpassed = true;
+    return false;
+  } else {
+    Serial.println("not yet");
+    return true;
+  }
 }
 
 bool is_music_off(int value) {

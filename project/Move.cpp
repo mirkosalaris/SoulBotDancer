@@ -64,23 +64,34 @@ void no_music_action() {
 }
 
 void computing_action() {
-  // TODO: maybe implement a few strategies to fill the delay
-  
+  // time in which the movement started
+  // only calculated on the first call
+  static const unsigned long int start_time = millis(); 
+
+  // time from when the movement started
+  unsigned long int mov_time = millis() - start_time;
+
   //Stretching movements for robot aretha
   //The robot rotates  0-90-0 and then 180-90-180 with rising and lowering hands
-  aretha.write(0);
-  delay(delay1);
-  aretha.write(90);
-  delay(delay2);
-  aretha.write(0);
-  delay(delay2);
-  aretha_arms.write(120); //rising hands
-  aretha.write(180);
-  delay(delay1);
-  aretha.write(90);
-  delay(delay2);
-  aretha.write(180);
-  delay(delay2);
-  aretha_arms.write(0); //lowering hands
-  
+
+  if (mov_time < TIME1)
+   aretha.write(0);
+  else if (mov_time < TIME2)
+    aretha.write(90);
+  else if (mov_time < TIME3)
+    aretha.write(0);
+  else if (mov_time < TIME4)
+  {
+    aretha_arms.write(120); //rising hands
+    aretha.write(180);
+  }
+  else if (mov_time < TIME5)
+    aretha.write(90);
+  else if (mov_time < TIME6)
+    aretha.write(180);
+  else
+  {
+    aretha_arms.write(0); //lowering hands
+    aretha.write(90);
+  }
 }

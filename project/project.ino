@@ -42,6 +42,10 @@ void setup() {
   franklin_arms.attach(FRANKLIN_ARMS_PIN);
   aretha.attach(ARETHA_PIN);
   aretha_arms.attach(ARETHA_ARMS_PIN);
+  franklin.write(90);
+  franklin_arms.write(0);
+  aretha.write(90);
+  aretha_arms.write(0); 
 }
 
 /* ***** LOOP ***** */

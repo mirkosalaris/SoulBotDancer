@@ -8,7 +8,7 @@
 #include "StateManager.h"
 #include "Filters.h"
 
-unsigned long int next_beat_time;
+unsigned long int next_beat_time = 0;
 
 /*
  * Change the state according to what is perceived in input.
@@ -18,7 +18,7 @@ unsigned long int next_beat_time;
 void update_state() {
   // TODO: this is just temporary, to at least test the beat detection algorithm
   STATE = BEAT;
-  /*int value = ...;
+  /*int value = (float)analogRead(AUDIO_PIN) - 519.f;
 
   if (is_music_off(value)) {
     STATE = NO_MUSIC;
@@ -37,19 +37,19 @@ void update_state() {
  */
 float sample, bass_value, envelope, beat_value; // avoid redeclaring them everytime
 void update_beat() {
-  static unsigned long int last_update_time = micros();
+  
+  static unsigned long last_update_time = micros();
   static int i = 0; // keep track of the number of samples seen
   static int beat_dist_values[BEAT_AVG_N]; // array beat distances, to compute the average
-  static unsigned long int last_beat_time = 0; // this stores the last computed beat time
+  static unsigned long last_beat_time = 0; // this stores the last computed beat time
   static unsigned long int beat_dist_sum = 0;
   static int beat_avg_counter = 0;
   
   // don't do anything if not enough time has passed
-  if (last_update_time + SAMPLE_PERIOD < micros()) {
+  if (last_update_time + SAMPLE_PERIOD > micros()) {
     return;
   }
   last_update_time = micros();
-  
 
   // Read ADC and center so ~512
   sample = (float)analogRead(AUDIO_PIN)-519.f;
@@ -67,12 +67,13 @@ void update_beat() {
           // Filter out repeating bass sounds 100 - 180bpm
           beat_value = beatFilter(envelope);
   
-          // If we are above threshold, light up LED
+          // If we are above threshold, we are in a beat!
           if(beat_value > BEAT_THRESH) {
-            if (micros() - last_beat_time > MIN_BEAT_DISTANCE) {
+            unsigned long int current = micros();
+            unsigned long int distance = current - last_beat_time;
 
-              // micros() is the current time, in microseconds
-              int distance = micros() - last_beat_time;
+            // the first condition is to avoid underflow
+            if (current > last_beat_time && distance > MIN_BEAT_DISTANCE) {
 
               // cycling sum, for the average computation
               beat_dist_sum = beat_dist_sum + distance - beat_dist_values[beat_avg_counter];
@@ -84,16 +85,18 @@ void update_beat() {
               }
 
               // before updating it, let's store the "previous" value of next_beat_time
-              last_beat_time = next_beat_time;
-              
+              last_beat_time = current;
+
+              Serial.println("update");
               // update global variable
-              next_beat_time = micros() + beat_dist_sum / BEAT_AVG_N;
+              next_beat_time = current + beat_dist_sum / BEAT_AVG_N;
             }
           }
 
           //Reset sample counter
           i = 0;
   }
+  i=i+1;
   
 }
 
@@ -139,6 +142,7 @@ bool is_computing(int value) {
    *    (to guarantee a coherence in the behavior of the robot, always 'act' at least)
    *  - continue to return true until we have a defined beat
    */
+  return false;
 
 }
 
@@ -146,5 +150,5 @@ bool is_music_off(int value) {
   /* TODO: manage both the start and the end
    *  - just check the overall volume, but avoid 'flickering'
    */
-  
+  return false;
 }

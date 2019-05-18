@@ -20,18 +20,18 @@ const int SAMPLE_PERIOD = 200; // sample rate = 5000hz
 
 /*** BEAT CALCULATION ***/
 const float BEAT_THRESH = 10.f;
-const int MIN_BEAT_DISTANCE = 100*1000; // 100ms == 100 000us
+const unsigned long MIN_BEAT_DISTANCE = 300000; // 300ms == 300 000us
 const int BEAT_AVG_N = 30; // number of beats distances from which to compute the avg. distance
 
 /*** HIGH PITCH CALCULATION ***/
 const int LOCAL_P_AVG_N = 100;    // number of values to consider for the computation of the "local" pitch moving average
-const int GLOBAL_P_AVG_N = 5000;  // number of values to consider for the computation of the "global" pitch moving average
+const int GLOBAL_P_AVG_N = 1000;  // number of values to consider for the computation of the "global" pitch moving average
 
 
 /*** MOVEMENT ***/
 const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
 const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
-const unsigned long int MOVEMENT_TIME = 500*1000; // 500ms == 500 000us
+const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
 
 
 /*** GLOBAL VARIABLES ***/

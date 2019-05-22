@@ -28,6 +28,11 @@ const int LOCAL_P_AVG_N = 100;    // number of values to consider for the comput
 const int GLOBAL_P_AVG_N = 1000;  // number of values to consider for the computation of the "global" pitch moving average
 
 
+/** NO MUSIC CALCULATION **/
+const int NO_MUSIC_THRESH = 10;
+const int NO_MUSIC_AVG_N = 20;
+const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
+
 /*** MOVEMENT ***/
 const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
 const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons

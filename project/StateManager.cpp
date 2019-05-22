@@ -18,7 +18,7 @@ unsigned long int next_beat_time = 0;
 void update_state() {
   int value = (float)analogRead(AUDIO_PIN) - 519.f;
 
-  if (is_music_off(value)) {
+  if (is_music_off(value, false)) {
     STATE = NO_MUSIC;
   } else if (is_computing(value)) {
     STATE = COMPUTING;
@@ -137,30 +137,68 @@ bool is_high_pitch(int value) {
 
 bool is_computing(int value) {
   /* TODO:
-   *  - be sure to return true for a few seconds after music is on
-   *    (to guarantee a coherence in the behavior of the robot, always 'act' at least)
    *  - continue to return true until we have a defined beat
    */
+  static boolean started = false;
 
-  // if already surpassed this phase, then we are surely not inside it (ASK PROFESSOR: are we sure? )
-  static boolean surpassed = false;
-  if (surpassed) {
-    return false;
+  static unsigned long start_time;
+
+  // if the music is NOT off and we have NOT already noticed it
+  if (!is_music_off(value, true) && !started) {
+    started = true;
+    start_time = micros();
   }
-  
-  if (micros() > COMPUTING_TIME) {
-    Serial.println("surpassed now");
-    surpassed = true;
+
+  if (start_time + micros() > COMPUTING_TIME) {
+    // reset
+    started = false;
     return false;
   } else {
-    Serial.println("not yet");
     return true;
   }
 }
 
-bool is_music_off(int value) {
+/**
+ * 
+ * Parameters:
+ *   value: the sound value
+ *   no_update: true implies that no calculation or update on the state will be performed
+ *   
+ * Return:
+ *   true if the music is off
+ *   false if the music is on
+ */
+bool is_music_off(int value, boolean no_update) {
   /* TODO: manage both the start and the end
    *  - just check the overall volume, but avoid 'flickering'
    */
-  return false;
+  static int last_values[NO_MUSIC_AVG_N];
+  static int last_index = 0;
+  static int sum = 0;
+  static unsigned long int last_time = micros();
+
+  // do computation only if requested
+  if (!no_update) {
+    unsigned long int current_time = micros();
+    if (current_time < last_time + NO_MUSIC_SAMPLE_PERIOD) {
+      // if not enough time has passed, just assume nothing changed
+      return (STATE == NO_MUSIC);
+    }
+    // otherwise, update 'last_time' and do the calculation
+    last_time = current_time;
+  
+    sum = sum + value - last_values[last_index];
+    last_values[last_index] = value;
+    last_index++;
+    if (last_index >= NO_MUSIC_AVG_N) {
+      last_index = 0;
+    }
+  }
+    
+  if (sum / NO_MUSIC_AVG_N > NO_MUSIC_THRESH) {
+    return false;
+  } else {
+    return true;
+  }
+  
 }

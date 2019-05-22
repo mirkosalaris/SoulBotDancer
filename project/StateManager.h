@@ -11,6 +11,6 @@ bool is_high_pitch(int value);
 
 bool is_computing(int value);
 
-bool is_music_off(int value);
+bool is_music_off(int value, boolean no_update);
 
 #endif

@@ -7,8 +7,9 @@
 #include "Commons.h"
 #include "StateManager.h"
 #include "Filters.h"
+#include "Move.h"
 
-unsigned long int next_beat_time = 0;
+//unsigned long int next_beat_time = 0;
 
 /*
  * Change the state according to what is perceived in input.
@@ -71,23 +72,29 @@ void update_beat() {
             unsigned long int distance = current - last_beat_time;
 
             // the first condition is to avoid underflow
+            // Avoid counting several beats that are almost together.
             if (current > last_beat_time && distance > MIN_BEAT_DISTANCE) {
 
-              // cycling sum, for the average computation
-              beat_dist_sum = beat_dist_sum + distance - beat_dist_values[beat_avg_counter];
-              beat_dist_values[beat_avg_counter] = distance;
-              beat_avg_counter++;
-              // reset the counter if it exceeds the array boundary
-              if (beat_avg_counter >= BEAT_AVG_N) {
-                beat_avg_counter = 0;
-              }
+                // DO SOMETHING IN THE BEAT --> we can add delay here, it does not matter whether we miss info.
+                // We can use beat_action with a speed parameter in order to move faster if the beats are near enough
 
-              // before updating it, let's store the "previous" value of next_beat_time
-              last_beat_time = current;
+                beat_action(current);
 
-              Serial.println("update");
-              // update global variable
-              next_beat_time = current + beat_dist_sum / BEAT_AVG_N;
+//              // cycling sum, for the average computation
+//              beat_dist_sum = beat_dist_sum + distance - beat_dist_values[beat_avg_counter];
+//              beat_dist_values[beat_avg_counter] = distance;
+//              beat_avg_counter++;
+//              // reset the counter if it exceeds the array boundary
+//              if (beat_avg_counter >= BEAT_AVG_N) {
+//                beat_avg_counter = 0;
+//              }
+//
+//              // before updating it, let's store the "previous" value of next_beat_time
+//              last_beat_time = current;
+//
+//              Serial.println("update");
+//              // update global variable
+//              next_beat_time = current + beat_dist_sum / BEAT_AVG_N;
             }
           }
 
@@ -100,39 +107,6 @@ void update_beat() {
 
 bool is_high_pitch(int value) {
   return false; // TODO remove this
-  
-  // TODO: keep track of the last local and global values and compare the two moving averages
-  // keep track of the last read values
-  static float last_local_values[LOCAL_P_AVG_N];
-  static float last_values[GLOBAL_P_AVG_N]; 
-
-  static int local_sum = 0;
-  static int global_sum = 0;
-
-  // the next 5 lines trick is to avoid shifting the array
-  static int j = 0;
-  last_local_values[j] = value;
-  j++;
-  if (j >= LOCAL_P_AVG_N) { // reset if exceeds array boundary
-    j = 0;
-  }
-  
-  // the next 5 lines trick is to avoid shifting the array
-  static int i = 0;
-  last_values[i] = value;
-  i++;
-  if (i >= GLOBAL_P_AVG_N) { // reset if exceeds array boundary
-    i = 0;
-  }
-
-  local_sum = local_sum + value - last_local_values[i]; // cycling sum (add the most recent, remove the last one)
-  global_sum = global_sum + value - last_values[j]; // cycling sum (add the most recent, remove the last one)
-
-  // if the pitch local average exceeds the global one, we are probably perceiving a "long high pitch"
-  if (local_sum > global_sum) {
-    return true;
-  }
-  return false;
 }
 
 bool is_computing(int value) {
@@ -141,7 +115,7 @@ bool is_computing(int value) {
    */
   static boolean started = false;
 
-  static unsigned long start_time;
+  static unsigned long start_time = 0;
 
   // if the music is NOT off and we have NOT already noticed it
   if (!is_music_off(value, true) && !started) {
@@ -149,7 +123,8 @@ bool is_computing(int value) {
     start_time = micros();
   }
 
-  if (start_time + micros() > COMPUTING_TIME) {
+// the time has passed (4.5 sec)
+  if (micros() - start_time > COMPUTING_TIME) {
     // reset
     started = false;
     return false;

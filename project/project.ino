@@ -66,7 +66,7 @@ void loop() {
      
   } else if (STATE == BEAT) {
     update_beat();
-    beat_action();
+//    beat_action();
     
   } else if (STATE == NO_MUSIC) {
     no_music_action();

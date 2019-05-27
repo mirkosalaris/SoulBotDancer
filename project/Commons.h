@@ -15,12 +15,18 @@ const int ARETHA_ARMS_PIN = 12;
 
 const int AUDIO_PIN = 0;
 
+// ultrasonic sensor pins
+// TODO: change pin numbers
+const int TRIGGER_PIN = 22;
+const int ECHO_PIN = 22;
+
 /*** SAMPLING ***/
 const int SAMPLE_PERIOD = 200; // sample rate = 5000hz
 
 /*** BEAT CALCULATION ***/
 const float BEAT_THRESH = 10.f;
 const unsigned long MIN_BEAT_DISTANCE = 300000; // 300ms == 300 000us
+const unsigned long MAX_BEAT_DISTANCE = 500000;
 const int BEAT_AVG_N = 30; // number of beats distances from which to compute the avg. distance
 
 /*** HIGH PITCH CALCULATION ***/
@@ -37,6 +43,12 @@ const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
 const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
 const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
 const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
+
+enum Speed {
+  MIN = 50,
+  MID = 150,
+  MAX = 255
+};
 
 const int TIME1 = 1000; // 1 sec
 const int TIME2 = 1500;
@@ -60,7 +72,7 @@ enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};
  */
 
 extern state STATE;
-extern unsigned long int next_beat_time;
+//extern unsigned long int next_beat_time;
 extern Servo franklin;      // franklin body servo motor
 extern Servo aretha;        // aretha body servo motor
 extern Servo franklin_arms; // franklin arms servo motor

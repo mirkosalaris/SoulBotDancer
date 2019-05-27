@@ -16,23 +16,32 @@ float delay1=1000*coeff;
 float delay2=500*coeff;
 
 
+// not used so far
+Speed get_speed(int distance){
+  if(distance <= MIN_BEAT_DISTANCE){
+    return MAX;
+  } else if(distance > MIN_BEAT_DISTANCE && distance <= MAX_BEAT_DISTANCE){
+    return MID;
+  }else {
+    return MIN;
+  }
+}
+
 void high_pitch_action() {
   // TODO: raise the arms
   
 }
 
-void beat_action() {
+void beat_action(unsigned long int beat_time) {
   unsigned long int current_time = micros();
-  
-
   // keep track of which is the last "next_beat_time", the one we were following
-  static unsigned long int last_next_beat_time = next_beat_time;
+  static unsigned long int last_next_beat_time = beat_time;
   static direction last_dir = dir;
   static unsigned long int last_command_time = 0;
   
   // If the next_beat_time has changed, it means we surpassed the current beat
   // It's time to change direction
-  if (next_beat_time != last_next_beat_time) {
+  if (beat_time != last_next_beat_time) {
     // if we were going up, now go down, and viceversa
     if (dir == up) {
       dir = down;
@@ -41,11 +50,11 @@ void beat_action() {
     }
 
     // update the last seen "next_beat_time"
-    last_next_beat_time = next_beat_time;
+    last_next_beat_time = beat_time;
   }
   
   // start to move ONLY when it is time. The goal is to reach the maximum extension ON the beat.
-  if (current_time > next_beat_time - MOVEMENT_TIME && current_time > last_command_time + MOVEMENT_TIME && last_dir != dir) {
+  if (/*current_time > next_beat_time - MOVEMENT_TIME && */current_time > last_command_time + MOVEMENT_TIME && last_dir != dir) {
     last_dir = dir;
 
     last_command_time = current_time;
@@ -60,13 +69,30 @@ void beat_action() {
 
 void no_music_action() {
   // TODO: interaction with the user
+
+  digitalWrite(TRIGGER_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIGGER_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIGGER_PIN, LOW);
+  float duration = pulseIn(ECHO_PIN, HIGH);
+  // meassured in cm.
+  float distance = duration * 0.0340 / 2;
+
+  if(distance > 200){
+    // no one in front of the stage
+  } else if(distance > 30){
+    // come closer to me sound
+  } else if (distance <= 30){
+    // let the music play sound
+  }
  
 }
 
 void computing_action() {
   // time in which the movement started
   // only calculated on the first call
-  static const unsigned long int start_time = millis(); 
+  static unsigned long int start_time = millis(); 
 
   // time from when the movement started
   unsigned long int mov_time = millis() - start_time;
@@ -75,23 +101,25 @@ void computing_action() {
   //The robot rotates  0-90-0 and then 180-90-180 with rising and lowering hands
 
   if (mov_time < TIME1)
-   aretha.write(0);
+   franklin.write(0);
   else if (mov_time < TIME2)
-    aretha.write(90);
+    franklin.write(90);
   else if (mov_time < TIME3)
-    aretha.write(0);
+    franklin.write(0);
   else if (mov_time < TIME4)
   {
-    aretha_arms.write(120); //rising hands
-    aretha.write(180);
+    franklin_arms.write(120); //rising hands
+    franklin.write(180);
   }
   else if (mov_time < TIME5)
-    aretha.write(90);
+    franklin.write(90);
   else if (mov_time < TIME6)
-    aretha.write(180);
+    franklin.write(180);
   else
   {
-    aretha_arms.write(0); //lowering hands
-    aretha.write(90);
+    franklin_arms.write(0); //lowering hands
+    franklin.write(90);
+    // start the movement again
+    start_time = millis();
   }
 }

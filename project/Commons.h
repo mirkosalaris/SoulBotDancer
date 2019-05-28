@@ -26,8 +26,8 @@ const int SAMPLE_PERIOD = 200; // sample rate = 5000hz
 
 /*** BEAT CALCULATION ***/
 const float BEAT_THRESH = 10.f;
-const unsigned long MIN_BEAT_DISTANCE = 500000; // 300ms == 300 000us
-const unsigned long MAX_BEAT_DISTANCE = 980000; // 980ms == 980 000us
+const unsigned long MIN_BEAT_DISTANCE = 700000; // 500ms == 500 000us
+const unsigned long MAX_BEAT_DISTANCE = 1000000; // 980ms == 980 000us
 const int BEAT_AVG_N = 30; // number of beats distances from which to compute the avg. distance
 
 /*** HIGH PITCH CALCULATION ***/
@@ -41,8 +41,9 @@ const int NO_MUSIC_AVG_N = 10;
 const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
 
 /*** MOVEMENT ***/
-const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
-const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
+const int MAX_ANGLE = 170;  // we can adjust this for aesthetic reasons
+const int MIN_ANGLE = 10;    // we can adjust this for aesthetic reasons
+const int MID_ANGLE = 90; 
 const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
 
 const int TIME1 = 1000; // 1 sec

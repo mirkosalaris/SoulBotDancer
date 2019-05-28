@@ -17,14 +17,10 @@
  * Look at the 'enum state' for a description of the different states.
  */
 void update_state() {
-  int value = (float)analogRead(AUDIO_PIN) - 519.f;
+  float value = (float)analogRead(AUDIO_PIN) - 81.f;
 
-  if (is_music_off(value, false)) {
+  if (is_music_off(value, true)) {
     STATE = NO_MUSIC;
-  } else if (is_computing(value)) {
-    STATE = COMPUTING;
-  } else if (is_high_pitch(value)) {
-    STATE = HIGH_PITCH;
   } else { // then just beat!
     STATE = BEAT;
   }
@@ -51,7 +47,7 @@ void update_beat() {
   last_update_time = micros();
 
   // Read ADC and center so ~512
-  sample = (float)analogRead(AUDIO_PIN)-519.f;
+  sample = (float)analogRead(AUDIO_PIN) - 81.f;
   
   bass_value = bassFilter(sample);
   
@@ -62,46 +58,26 @@ void update_beat() {
   envelope = envelopeFilter(bass_value);
   
   // Every 200 samples (25hz) filter the envelope
-  if(i == 200) {
+  if(i % 200 == 0) { //  && !is_music_off(sample, false)
           // Filter out repeating bass sounds 100 - 180bpm
           beat_value = beatFilter(envelope);
-  
           // If we are above threshold, we are in a beat!
           if(beat_value > BEAT_THRESH) {
             unsigned long int current = micros();
             unsigned long int distance = current - last_beat_time;
-
+            
+            int velocity = get_speed(distance);
             // the first condition is to avoid underflow
             // Avoid counting several beats that are almost together.
             if (current > last_beat_time && distance > MIN_BEAT_DISTANCE) {
-
-                // DO SOMETHING IN THE BEAT --> we can add delay here, it does not matter whether we miss info.
-                // We can use beat_action with a speed parameter in order to move faster if the beats are near enough
-
-                beat_action(current);
-
-//              // cycling sum, for the average computation
-//              beat_dist_sum = beat_dist_sum + distance - beat_dist_values[beat_avg_counter];
-//              beat_dist_values[beat_avg_counter] = distance;
-//              beat_avg_counter++;
-//              // reset the counter if it exceeds the array boundary
-//              if (beat_avg_counter >= BEAT_AVG_N) {
-//                beat_avg_counter = 0;
-//              }
-//
-//              // before updating it, let's store the "previous" value of next_beat_time
-//              last_beat_time = current;
-//
-//              Serial.println("update");
-//              // update global variable
-//              next_beat_time = current + beat_dist_sum / BEAT_AVG_N;
+                beat_action(current, velocity);
+                last_beat_time = current;
             }
           }
-
-          //Reset sample counter
-          i = 0;
+    // avoid going to MAX_INT
+    i = 0;
   }
-  i=i+1;
+  i++;
   
 }
 
@@ -112,17 +88,17 @@ bool is_high_pitch(int value) {
 bool is_computing(int value) {
   /* TODO:
    *  - continue to return true until we have a defined beat
-   */
+   *
   static boolean started = false;
 
   static unsigned long start_time = 0;
 
   // if the music is NOT off and we have NOT already noticed it
-  if (!is_music_off(value, true) && !started) {
+  if (!is_music_off(value, false) && !started) {
     started = true;
     start_time = micros();
   }
-
+  
 // the time has passed (4.5 sec)
   if (micros() - start_time > COMPUTING_TIME) {
     // reset
@@ -130,7 +106,7 @@ bool is_computing(int value) {
     return false;
   } else {
     return true;
-  }
+  } */
 }
 
 /**
@@ -143,17 +119,24 @@ bool is_computing(int value) {
  *   true if the music is off
  *   false if the music is on
  */
-bool is_music_off(int value, boolean no_update) {
+bool is_music_off(float value, boolean b_update) {
   /* TODO: manage both the start and the end
    *  - just check the overall volume, but avoid 'flickering'
    */
   static int last_values[NO_MUSIC_AVG_N];
   static int last_index = 0;
-  static int sum = 0;
+  static float sum = 0;
   static unsigned long int last_time = micros();
 
+  // remove the negative part of the sound wave
+  // and return the current state. This will 
+  // avoid summing and substracting the value every time.
+  if(value < 0){
+    return (STATE == NO_MUSIC);
+  }
+
   // do computation only if requested
-  if (!no_update) {
+  if (b_update) {
     unsigned long int current_time = micros();
     if (current_time < last_time + NO_MUSIC_SAMPLE_PERIOD) {
       // if not enough time has passed, just assume nothing changed
@@ -161,7 +144,7 @@ bool is_music_off(int value, boolean no_update) {
     }
     // otherwise, update 'last_time' and do the calculation
     last_time = current_time;
-  
+ 
     sum = sum + value - last_values[last_index];
     last_values[last_index] = value;
     last_index++;
@@ -169,8 +152,8 @@ bool is_music_off(int value, boolean no_update) {
       last_index = 0;
     }
   }
-    
-  if (sum / NO_MUSIC_AVG_N > NO_MUSIC_THRESH) {
+  
+  if (sum / NO_MUSIC_AVG_N >= NO_MUSIC_THRESH) {
     return false;
   } else {
     return true;

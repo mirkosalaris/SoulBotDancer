@@ -17,22 +17,21 @@ float delay2=500*coeff;
 
 
 // not used so far
-Speed get_speed(int distance){
+int get_speed(unsigned long int distance){
   if(distance <= MIN_BEAT_DISTANCE){
-    return MAX;
+    return 255;
   } else if(distance > MIN_BEAT_DISTANCE && distance <= MAX_BEAT_DISTANCE){
-    return MID;
+    return 125;
   }else {
-    return MIN;
+    return 60;
   }
 }
 
 void high_pitch_action() {
   // TODO: raise the arms
-  
 }
 
-void beat_action(unsigned long int beat_time) {
+void beat_action(unsigned long int beat_time, int s_speed) {
   unsigned long int current_time = micros();
   // keep track of which is the last "next_beat_time", the one we were following
   static unsigned long int last_next_beat_time = beat_time;
@@ -53,16 +52,23 @@ void beat_action(unsigned long int beat_time) {
     last_next_beat_time = beat_time;
   }
   
+  if(STATE == NO_MUSIC){
+    Serial.println("STOP ALL THE MOVEMENTS");
+    return;
+  }
+  
   // start to move ONLY when it is time. The goal is to reach the maximum extension ON the beat.
-  if (/*current_time > next_beat_time - MOVEMENT_TIME && */current_time > last_command_time + MOVEMENT_TIME && last_dir != dir) {
+  if (/*current_time > last_command_time + MOVEMENT_TIME &&*/ last_dir != dir) {
     last_dir = dir;
 
     last_command_time = current_time;
     
     if (dir == up) {
-      franklin_arms.write(MAX_ANGLE);
+//      Serial.println("MOVE UP");
+      franklin_arms.write(MAX_ANGLE, s_speed, true);
     } else { // dir == down
-      franklin_arms.write(MIN_ANGLE);
+//      Serial.println("MOVE DOWN");
+      franklin_arms.write(MIN_ANGLE, s_speed, true);
     }
   }
 }
@@ -99,7 +105,7 @@ void computing_action() {
 
   //Stretching movements for robot aretha
   //The robot rotates  0-90-0 and then 180-90-180 with rising and lowering hands
-
+/*
   if (mov_time < TIME1)
    franklin.write(0);
   else if (mov_time < TIME2)
@@ -121,5 +127,5 @@ void computing_action() {
     franklin.write(90);
     // start the movement again
     start_time = millis();
-  }
+  } */
 }

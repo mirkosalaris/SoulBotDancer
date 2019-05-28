@@ -11,10 +11,10 @@
 #include "StateManager.h"
 
 state STATE; // overall state of the application: see Commons.h for details
-Servo franklin;   // franklin body servo motor
-Servo aretha;     // aretha body servo motor
-Servo franklin_arms;  // franklin arms servo motor
-Servo aretha_arms;    // aretha arms servo motor
+VarSpeedServo franklin;   // franklin body servo motor
+VarSpeedServo aretha;     // aretha body servo motor
+VarSpeedServo franklin_arms;  // franklin arms servo motor
+VarSpeedServo aretha_arms;    // aretha arms servo motor
 
 
 // defines for setting and clearing register bits
@@ -50,28 +50,14 @@ void setup() {
 
 /* ***** LOOP ***** */
 void loop() {
-  update_state(); // let's check what we have to do (wait? follow the beat? ...)
-
-  // act according to the state
-  if (STATE == HIGH_PITCH) {
-    // we still have to keep track of the beat, even if our movement ignores it at the moment
-    update_beat();
-
-    high_pitch_action();
-
-    /* Notice: do not change the order of the calls in here.
-     * Let's call the update_beat() first, so that it is always called
-     * as the first function (independently of the state), to have a regular timing of the update.
-     */
-     
-  } else if (STATE == BEAT) {
-    update_beat();
-//    beat_action();
-    
-  } else if (STATE == NO_MUSIC) {
-    no_music_action();
-    
-  } else { // == COMPUTING
-    computing_action();
-  }
+    update_state(); // let's check what we have to do (wait? follow the beat? ...)
+    if (STATE == BEAT) {
+      update_beat();
+      
+    } else if (STATE == NO_MUSIC) {
+      no_music_action();
+    }
+  //  } else { // == COMPUTING
+  //    computing_action();
+  //  }
 }

@@ -21,9 +21,9 @@ int get_speed(unsigned long int distance){
   if(distance <= MIN_BEAT_DISTANCE){
     return 255;
   } else if(distance > MIN_BEAT_DISTANCE && distance <= MAX_BEAT_DISTANCE){
-    return 125;
+    return 175;
   }else {
-    return 60;
+    return 100;
   }
 }
 
@@ -62,13 +62,21 @@ void beat_action(unsigned long int beat_time, int s_speed) {
     last_dir = dir;
 
     last_command_time = current_time;
+    int body_speed= s_speed*0.6;
     
     if (dir == up) {
-//      Serial.println("MOVE UP");
-      franklin_arms.write(MAX_ANGLE, s_speed, true);
+ //      Serial.println("MOVE UP");
+      franklin_arms.write(MID_ANGLE, s_speed);
+      aretha_arms.write(MID_ANGLE,s_speed);
+      franklin.write(MAX_ANGLE, body_speed);
+      aretha.write(MAX_ANGLE, body_speed,true);
     } else { // dir == down
-//      Serial.println("MOVE DOWN");
-      franklin_arms.write(MIN_ANGLE, s_speed, true);
+ //     Serial.println("MOVE DOWN");
+      franklin_arms.write(MIN_ANGLE, s_speed);
+      aretha_arms.write(MIN_ANGLE,s_speed);
+      franklin.write(MIN_ANGLE, body_speed);
+      aretha.write(MIN_ANGLE, body_speed,true);
+
     }
   }
 }

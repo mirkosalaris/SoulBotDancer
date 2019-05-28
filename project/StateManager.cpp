@@ -9,8 +9,6 @@
 #include "Filters.h"
 #include "Move.h"
 
-//unsigned long int next_beat_time = 0;
-
 /*
  * Change the state according to what is perceived in input.
  * The possible states are NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH.
@@ -56,6 +54,7 @@ void update_beat() {
     bass_value=-bass_value;
   }
   envelope = envelopeFilter(bass_value);
+
   
   // Every 200 samples (25hz) filter the envelope
   if(i % 200 == 0) { //  && !is_music_off(sample, false)
@@ -67,6 +66,7 @@ void update_beat() {
             unsigned long int distance = current - last_beat_time;
             
             int velocity = get_speed(distance);
+            //Serial.println(velocity);
             // the first condition is to avoid underflow
             // Avoid counting several beats that are almost together.
             if (current > last_beat_time && distance > MIN_BEAT_DISTANCE) {

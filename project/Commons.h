@@ -5,7 +5,6 @@
 #ifndef COMMONS
 #define COMMONS
 
-//#include <Servo.h>
 #include <VarSpeedServo.h>
 
 /*** ARDUINO SCHEMATICS ***/
@@ -68,7 +67,6 @@ enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};
  */
 
 extern state STATE;
-//extern unsigned long int next_beat_time;
 extern VarSpeedServo franklin;      // franklin body servo motor
 extern VarSpeedServo aretha;        // aretha body servo motor
 extern VarSpeedServo franklin_arms; // franklin arms servo motor

@@ -38,6 +38,7 @@ void setup() {
 
   Serial.begin(9600);
 
+  // Set-up the movement motors 
   franklin.attach(FRANKLIN_PIN);
   franklin_arms.attach(FRANKLIN_ARMS_PIN);
   aretha.attach(ARETHA_PIN);
@@ -51,13 +52,11 @@ void setup() {
 /* ***** LOOP ***** */
 void loop() {
     update_state(); // let's check what we have to do (wait? follow the beat? ...)
+    
     if (STATE == BEAT) {
       update_beat();
       
     } else if (STATE == NO_MUSIC) {
       no_music_action();
     }
-  //  } else { // == COMPUTING
-  //    computing_action();
-  //  }
 }

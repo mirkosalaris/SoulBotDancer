@@ -16,7 +16,10 @@ float delay1=1000*coeff;
 float delay2=500*coeff;
 
 
-// not used so far
+/** 
+ * Returns the speed of the movements based on the distance, which is 
+ * the distance between the previous beat and the current one. 
+ */
 int get_speed(unsigned long int distance){
   if(distance <= MIN_BEAT_DISTANCE){
     return 255;
@@ -27,11 +30,7 @@ int get_speed(unsigned long int distance){
   }
 }
 
-void high_pitch_action() {
-  // TODO: raise the arms
-}
-
-void beat_action(unsigned long int beat_time, int s_speed) {
+void beat_action(unsigned long int beat_time, int arms_speed) {
   unsigned long int current_time = micros();
   // keep track of which is the last "next_beat_time", the one we were following
   static unsigned long int last_next_beat_time = beat_time;
@@ -52,38 +51,38 @@ void beat_action(unsigned long int beat_time, int s_speed) {
     last_next_beat_time = beat_time;
   }
   
-  if(STATE == NO_MUSIC){
-    Serial.println("STOP ALL THE MOVEMENTS");
-    return;
-  }
-  
   // start to move ONLY when it is time. The goal is to reach the maximum extension ON the beat.
-  if (/*current_time > last_command_time + MOVEMENT_TIME &&*/ last_dir != dir) {
+  if (last_dir != dir) {
     last_dir = dir;
 
+    // time when we sent the move instruction => NOW!
     last_command_time = current_time;
-    int body_speed= s_speed*0.6;
     
+    // body speed is 2/3 of the arms speed
+    int body_speed= arms_speed*0.6;
+
+    // Move the arms up
     if (dir == up) {
- //      Serial.println("MOVE UP");
-      franklin_arms.write(MID_ANGLE, s_speed);
-      aretha_arms.write(MID_ANGLE,s_speed);
+      franklin_arms.write(MID_ANGLE, arms_speed);
+      aretha_arms.write(MID_ANGLE,arms_speed);
       franklin.write(MAX_ANGLE, body_speed);
+      // wait until the end of the movement.
       aretha.write(MAX_ANGLE, body_speed,true);
-    } else { // dir == down
- //     Serial.println("MOVE DOWN");
-      franklin_arms.write(MIN_ANGLE, s_speed);
-      aretha_arms.write(MIN_ANGLE,s_speed);
+    } else { // move the arms down
+      franklin_arms.write(MIN_ANGLE, arms_speed);
+      aretha_arms.write(MIN_ANGLE,arms_speed);
       franklin.write(MIN_ANGLE, body_speed);
+      // wait until the end of the movement.
       aretha.write(MIN_ANGLE, body_speed,true);
 
     }
   }
 }
 
-void no_music_action() {
-  // TODO: interaction with the user
-
+/**
+ * get distance from the ultrasonic sensor: this should be called only when there is no music 
+ */
+float get_user_distance(){
   digitalWrite(TRIGGER_PIN, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIGGER_PIN, HIGH);
@@ -91,8 +90,18 @@ void no_music_action() {
   digitalWrite(TRIGGER_PIN, LOW);
   float duration = pulseIn(ECHO_PIN, HIGH);
   // meassured in cm.
-  float distance = duration * 0.0340 / 2;
+  return (duration * 0.0340 / 2);
+}
 
+/**
+ * Do something when there is no music.
+ *  - If there is no one in front of the robot (distance > 2 mts), it should move its arms
+ *  - If there is someone in between 2 mts and 30 cm, the robot should talk
+ *  - If there is someone in front of the robot, Let's play the music!
+ */
+void no_music_action() {
+  float distance = get_user_distance();
+  
   if(distance > 200){
     // no one in front of the stage
   } else if(distance > 30){
@@ -103,6 +112,17 @@ void no_music_action() {
  
 }
 
+/*******************************************************/
+/**
+ * @deprecated
+ */
+void high_pitch_action() {
+  // TODO: raise the arms
+}
+
+/**
+ * @deprecated
+ */
 void computing_action() {
   // time in which the movement started
   // only calculated on the first call
@@ -113,7 +133,7 @@ void computing_action() {
 
   //Stretching movements for robot aretha
   //The robot rotates  0-90-0 and then 180-90-180 with rising and lowering hands
-/*
+
   if (mov_time < TIME1)
    franklin.write(0);
   else if (mov_time < TIME2)
@@ -135,5 +155,5 @@ void computing_action() {
     franklin.write(90);
     // start the movement again
     start_time = millis();
-  } */
+  }
 }

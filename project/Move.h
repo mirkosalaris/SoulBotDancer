@@ -13,4 +13,6 @@ void computing_action();
 
 int get_speed(unsigned long int distance);
 
+float get_user_distance();
+
 #endif

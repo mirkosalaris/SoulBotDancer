@@ -31,9 +31,9 @@ void update_state() {
 }
 
 /**
- * Analyse the audio in order to undestand whether there is a beat or not. 
- * In case we detect a beat, we make the robot move.
- */
+   Analyse the audio in order to undestand whether there is a beat or not.
+   In case we detect a beat, we make the robot move.
+*/
 void update_beat() {
 
   static unsigned long last_update_time = micros();
@@ -57,6 +57,8 @@ void update_beat() {
   }
   envelope = envelopeFilter(bass_value);
 
+  float voice_value = voiceFilter(sample);
+  is_high_pitch(voice_value);
 
   // Every 200 samples (25hz) filter the envelope
   if (i == 200) {
@@ -73,7 +75,7 @@ void update_beat() {
       // the first condition is to avoid underflow
       // Avoid counting several beats that are almost together.
       if (current > last_beat_time && distance > MIN_BEAT_DISTANCE) {
-        // this funciton is blocking, so we'll miss the next beats. 
+        // this funciton is blocking, so we'll miss the next beats.
         // But that's not a problem, since we may do that in real life.
         beat_action(current, velocity);
         // update the last beat with the current beat.
@@ -82,12 +84,12 @@ void update_beat() {
     }
     i = 0;
   }
-  
+
   i++;
 }
 
 /**
- * Check whether the music is OFF or ON.
+   Check whether the music is OFF or ON.
    Parameters:
      value: the sound value
      b_update: true implies that calculation or update on the state will be performed
@@ -106,7 +108,7 @@ bool is_music_off(float value, bool b_update) {
   // remove the negative part of the sound wave
   // and return the current state. This will
   // avoid summing and substracting the value every time.
-  // if that is the case, just return the current state: 
+  // if that is the case, just return the current state:
   // if the music is on, returns FALSE, if not, TRUE.
   if (value < 0) {
     return (STATE == NO_MUSIC);
@@ -115,12 +117,12 @@ bool is_music_off(float value, bool b_update) {
   // do computation only if requested
   if (b_update) {
     unsigned long int current_time = micros();
-    
+
     // if not enough time has passed, just assume nothing changed
     if (current_time < last_time + NO_MUSIC_SAMPLE_PERIOD) {
       return (STATE == NO_MUSIC);
     }
-    
+
     // otherwise, update 'last_time' and do the calculation
     last_time = current_time;
 
@@ -146,15 +148,49 @@ bool is_music_off(float value, bool b_update) {
 
 /***********************************************************/
 /**
- * @deprecated
- */
+   @deprecated
+*/
 bool is_high_pitch(int value) {
-  return false; // TODO remove this
+  // TODO: keep track of the last local and global values and compare the two moving averages
+  // keep track of the last read values
+  static float last_local_values[LOCAL_P_AVG_N];
+  static float last_values[GLOBAL_P_AVG_N];
+
+  static int local_sum = 0;
+  static int global_sum = 0;
+
+  // the next 5 lines trick is to avoid shifting the array
+  static int lv_counter = 0;
+  last_local_values[lv_counter] = value;
+  lv_counter++;
+  if (lv_counter >= LOCAL_P_AVG_N) { // reset if exceeds array boundary
+    lv_counter = 0;
+  }
+
+  // the next 5 lines trick is to avoid shifting the array
+  static int gv_counter = 0;
+  last_values[gv_counter] = value;
+  gv_counter++;
+  if (gv_counter >= GLOBAL_P_AVG_N) { // reset if exceeds array boundary
+    gv_counter = 0;
+  }
+
+  local_sum = local_sum + value - last_local_values[lv_counter]; // cycling sum (add the most recent, remove the last one)
+  global_sum = global_sum + value - last_values[gv_counter]; // cycling sum (add the most recent, remove the last one)
+
+//  float local_avg = (float)local_sum / LOCAL_P_AVG_N;
+//  float global_avg = (float)global_sum / GLOBAL_P_AVG_N;
+
+  // if the pitch local average exceeds the global one, we are probably perceiving a "long high pitch"
+  if (local_sum > global_sum) {
+    return true;
+  }
+  return false;
 }
 
 /**
- * @deprecated
- */
+   @deprecated
+*/
 bool is_computing(int value) {
   /* TODO:
       - continue to return true until we have a defined beat

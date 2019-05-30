@@ -101,18 +101,21 @@ float get_user_distance(){
  */
 void no_music_action() {
   float distance = get_user_distance();
-
+// Serial.println(distance);
   // the maximum range of the HC-SR04 is 4 meters
   if(distance > 200){
+    //Serial.println("distance > 200");
     emmit_sound(SPEAK_PIN_1);
     // wait 3 seconds to do any interaction again
     delay(3000);
   } else if(distance > 30){
+    //Serial.println("distance > 30");
     // come closer to me sound
     emmit_sound(SPEAK_PIN_2);
     // move the arms up and down.
     move_arms_up_down();
   } else if (distance <= 30){
+    //Serial.println("distance <= 30");
     // let the music play sound
     emmit_sound(SPEAK_PIN_3);
     // move the body left and right

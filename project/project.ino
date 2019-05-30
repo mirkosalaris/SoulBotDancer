@@ -59,9 +59,11 @@ void setup() {
 }
 
 /* ***** LOOP ***** */
+state previous_state = NO_MUSIC;
 void loop() {
     update_state(); // let's check what we have to do (wait? follow the beat? ...)
-    
+
+
     if (STATE == BEAT) {
       update_beat(envelope);
       

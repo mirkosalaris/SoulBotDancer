@@ -25,21 +25,22 @@ void update_state() {
   sample = (float)analogRead(AUDIO_PIN) - 81.f;
 
   bass_value = bassFilter(sample);
+  
 
   // Take signal amplitude and filter
   if (bass_value < 0) {
     bass_value = -bass_value;
   }
   envelope = envelopeFilter(bass_value);
+//
+//  Serial.print(sample);
+//  Serial.print(" ");
+//  Serial.println(envelope);
 
-  Serial.print(sample);
-  Serial.print(" ");
-  Serial.println(envelope);
-
-  if (is_music_off(envelope, true)) {
+  if (is_music_off(sample, true)) {
     STATE = NO_MUSIC;
   } else if(is_high_pitch(envelope)){
-    Serial.println("HIGH PITCH DO SOMETHING!");
+//    Serial.println("HIGH PITCH DO SOMETHING!");
   } else { // then just beat!
     STATE = BEAT;
   }
@@ -111,9 +112,15 @@ bool is_music_off(float value, bool b_update) {
   // avoid summing and substracting the value every time.
   // if that is the case, just return the current state:
   // if the music is on, returns FALSE, if not, TRUE.
+
   if (value < 0) {
     return (STATE == NO_MUSIC);
   }
+      
+      //Serial.print(sample);
+      //Serial.print(" ");
+      //Serial.println(NO_MUSIC_THRESH);
+      //Serial.print(" ");
 
   // do computation only if requested
   if (b_update) {
@@ -139,8 +146,11 @@ bool is_music_off(float value, bool b_update) {
 
   // if the average is over the threashold, it means that the music is ON.
   // NOTE that the function is called is_music_OFF.
+    //Serial.println(sum/NO_MUSIC_AVG_N);
   if (sum / NO_MUSIC_AVG_N >= NO_MUSIC_THRESH) {
+
     return false;
+
   } else {
     // if the average is above the threshold, it means that the music is OFF.
     return true;

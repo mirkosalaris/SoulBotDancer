@@ -41,7 +41,7 @@ const float HIGH_PITCH_THRESHOLD = 5; // threshold for high pitch difference
 
 
 /** NO MUSIC CALCULATION **/
-const float NO_MUSIC_THRESH = 0.5;
+const float NO_MUSIC_THRESH = 1.5;
 const int NO_MUSIC_AVG_N = 10;
 const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
 

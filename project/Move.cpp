@@ -61,16 +61,20 @@ void beat_action(unsigned long int beat_time, int arms_speed) {
     // body speed is 2/3 of the arms speed
     int body_speed= arms_speed*0.6;
 
-    // Move the arms up
+    // Move the right and left (body)
     if (dir == up) {
       franklin_arms.write(MID_ANGLE, arms_speed);
-      aretha_arms.write(MID_ANGLE,arms_speed);
+      aretha_arms.write(MID_ANGLE,arms_speed,true);
+      franklin_arms.write(0, arms_speed);
+      aretha_arms.write(0,arms_speed);
       franklin.write(MAX_ANGLE, body_speed);
       // wait until the end of the movement.
       aretha.write(MAX_ANGLE, body_speed,true);
     } else { // move the arms down
-      franklin_arms.write(MIN_ANGLE, arms_speed);
-      aretha_arms.write(MIN_ANGLE,arms_speed);
+      franklin_arms.write(MID_ANGLE, arms_speed);
+      aretha_arms.write(MID_ANGLE,arms_speed,true);
+      franklin_arms.write(0, arms_speed);
+      aretha_arms.write(0,arms_speed);
       franklin.write(MIN_ANGLE, body_speed);
       // wait until the end of the movement.
       aretha.write(MIN_ANGLE, body_speed,true);
@@ -100,27 +104,36 @@ float get_user_distance(){
  *  - If there is someone in front of the robot, Let's play the music!
  */
 void no_music_action() {
+  static unsigned long int start_time= millis();
+  unsigned long int current_time=millis();
+
+  if(current_time-start_time < 3000){
+    return;
+  }
+  
   float distance = get_user_distance();
 // Serial.println(distance);
   // the maximum range of the HC-SR04 is 4 meters
+  
   if(distance > 200){
     //Serial.println("distance > 200");
-    emmit_sound(SPEAK_PIN_1);
+    //emmit_sound(SPEAK_PIN_1);
     // wait 3 seconds to do any interaction again
-    delay(3000);
   } else if(distance > 30){
     //Serial.println("distance > 30");
     // come closer to me sound
+    //emmit_sound(SPEAK_PIN_2);
     emmit_sound(SPEAK_PIN_2);
     // move the arms up and down.
-    move_arms_up_down();
+    //move_arms_up_down();
   } else if (distance <= 30){
     //Serial.println("distance <= 30");
     // let the music play sound
-    emmit_sound(SPEAK_PIN_3);
+    //emmit_sound(SPEAK_PIN_3);
     // move the body left and right
-    move_body_left_right();
-    delay(300);
+    //move_body_left_right();
+     emmit_sound(SPEAK_PIN_1);
+    
   }
  
 }

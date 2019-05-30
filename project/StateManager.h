@@ -13,4 +13,6 @@ bool is_computing(int value);
 
 bool is_music_off(float value, boolean no_update);
 
+bool is_interacting();
+
 #endif

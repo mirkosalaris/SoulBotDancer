@@ -26,7 +26,6 @@ void update_state() {
 
   bass_value = bassFilter(sample);
   
-
   // Take signal amplitude and filter
   if (bass_value < 0) {
     bass_value = -bass_value;
@@ -39,7 +38,8 @@ void update_state() {
 
   if (is_music_off(sample, true)) {
     STATE = NO_MUSIC;
-  } else if(is_high_pitch(envelope)){
+  }
+  else if(is_high_pitch(envelope)){
 //    Serial.println("HIGH PITCH DO SOMETHING!");
   } else { // then just beat!
     STATE = BEAT;
@@ -192,6 +192,15 @@ bool is_high_pitch(int value) {
     return true;
   }
   return false;
+}
+
+bool is_interacting(){
+  int read_1 = digitalRead(SPEAK_PIN_1);
+  int read_2 = digitalRead(SPEAK_PIN_2);
+  byte pinOn = read_1 && read_2;
+  Serial.print(" result ");
+  Serial.println(pinOn);
+  return (pinOn == 0);
 }
 /***********************************************************/
 /**

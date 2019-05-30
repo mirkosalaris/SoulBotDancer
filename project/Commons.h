@@ -48,7 +48,7 @@ const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
 /*** MOVEMENT ***/
 const int MAX_ANGLE = 170;  // we can adjust this for aesthetic reasons
 const int MIN_ANGLE = 10;    // we can adjust this for aesthetic reasons
-const int MID_ANGLE = 90; 
+const int MID_ANGLE = 55; 
 const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
 
 const int TIME1 = 1000; // 1 sec

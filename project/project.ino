@@ -38,11 +38,19 @@ void setup() {
 
   Serial.begin(9600);
 
+  
+
   // Set-up audio module. All pins should be High except when the emmit sound.
+  pinMode(SPEAK_PIN_0,OUTPUT);
+  pinMode(SPEAK_PIN_1,OUTPUT);
+  pinMode(SPEAK_PIN_2,OUTPUT);
+  pinMode(SPEAK_PIN_3,OUTPUT);
+  
   digitalWrite(SPEAK_PIN_0, HIGH);
   digitalWrite(SPEAK_PIN_1, HIGH);
   digitalWrite(SPEAK_PIN_2, HIGH);
   digitalWrite(SPEAK_PIN_3, HIGH);
+  
 
   // Set-up the movement motors 
   franklin.attach(FRANKLIN_PIN);
@@ -62,6 +70,7 @@ void setup() {
 state previous_state = NO_MUSIC;
 void loop() {
     update_state(); // let's check what we have to do (wait? follow the beat? ...)
+    Serial.println(STATE);
 
 
     if (STATE == BEAT) {
@@ -70,4 +79,5 @@ void loop() {
     } else if (STATE == NO_MUSIC) {
       no_music_action();
     }
+    
 }

@@ -5,7 +5,7 @@
 
 void update_state();
 
-void update_beat();
+void update_beat(float envelope);
 
 bool is_high_pitch(int value);
 

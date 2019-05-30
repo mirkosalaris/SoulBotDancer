@@ -38,6 +38,12 @@ void setup() {
 
   Serial.begin(9600);
 
+  // Set-up audio module. All pins should be High except when the emmit sound.
+  digitalWrite(SPEAK_PIN_0, HIGH);
+  digitalWrite(SPEAK_PIN_1, HIGH);
+  digitalWrite(SPEAK_PIN_2, HIGH);
+  digitalWrite(SPEAK_PIN_3, HIGH);
+
   // Set-up the movement motors 
   franklin.attach(FRANKLIN_PIN);
   franklin_arms.attach(FRANKLIN_ARMS_PIN);
@@ -47,6 +53,9 @@ void setup() {
   franklin_arms.write(0);
   aretha.write(90);
   aretha_arms.write(0); 
+
+  // everything is set-up.
+  emmit_sound(SPEAK_PIN_0);
 }
 
 /* ***** LOOP ***** */
@@ -54,7 +63,7 @@ void loop() {
     update_state(); // let's check what we have to do (wait? follow the beat? ...)
     
     if (STATE == BEAT) {
-      update_beat();
+      update_beat(envelope);
       
     } else if (STATE == NO_MUSIC) {
       no_music_action();

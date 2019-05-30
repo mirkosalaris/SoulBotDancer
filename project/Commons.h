@@ -15,10 +15,15 @@ const int ARETHA_ARMS_PIN = 12;
 
 const int AUDIO_PIN = 0;
 
+// audio fx module
+const int SPEAK_PIN_0 = 22;
+const int SPEAK_PIN_1 = 24;
+const int SPEAK_PIN_2 = 26;
+const int SPEAK_PIN_3 = 28;
+
 // ultrasonic sensor pins
-// TODO: change pin numbers
-const int TRIGGER_PIN = 22;
-const int ECHO_PIN = 22;
+const int TRIGGER_PIN = 51;
+const int ECHO_PIN = 53;
 
 /*** SAMPLING ***/
 const int SAMPLE_PERIOD = 200; // sample rate = 5000hz
@@ -31,7 +36,8 @@ const int BEAT_AVG_N = 30; // number of beats distances from which to compute th
 
 /*** HIGH PITCH CALCULATION ***/
 const int LOCAL_P_AVG_N = 100;    // number of values to consider for the computation of the "local" pitch moving average
-const int GLOBAL_P_AVG_N = 1000;  // number of values to consider for the computation of the "global" pitch moving average
+const int GLOBAL_P_AVG_N = 200;  // number of values to consider for the computation of the "global" pitch moving average
+const float HIGH_PITCH_THRESHOLD = 5; // threshold for high pitch difference
 
 
 /** NO MUSIC CALCULATION **/
@@ -67,6 +73,10 @@ enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};
  */
 
 extern state STATE;
+extern float envelope;
+extern float sample;
+extern float bass_value;
+extern float beat_value;
 extern VarSpeedServo franklin;      // franklin body servo motor
 extern VarSpeedServo aretha;        // aretha body servo motor
 extern VarSpeedServo franklin_arms; // franklin arms servo motor

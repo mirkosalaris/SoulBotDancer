@@ -101,15 +101,51 @@ float get_user_distance(){
  */
 void no_music_action() {
   float distance = get_user_distance();
-  
+
+  // the maximum range of the HC-SR04 is 4 meters
   if(distance > 200){
-    // no one in front of the stage
+    emmit_sound(SPEAK_PIN_1);
+    // wait 3 seconds to do any interaction again
+    delay(3000);
   } else if(distance > 30){
     // come closer to me sound
+    emmit_sound(SPEAK_PIN_2);
+    // move the arms up and down.
+    move_arms_up_down();
   } else if (distance <= 30){
     // let the music play sound
+    emmit_sound(SPEAK_PIN_3);
+    // move the body left and right
+    move_body_left_right();
+    delay(300);
   }
  
+}
+
+void emmit_sound(int pin_number){
+  digitalWrite(pin_number, LOW);
+  delay(125);
+  digitalWrite(pin_number, HIGH);
+}
+
+void move_arms_up_down(){
+  int angle = 0;
+  for(int i = 0; i < 4; i++){
+    franklin_arms.write(angle, 255);
+    aretha_arms.write(angle, 255);
+    angle = (angle == 0) ? 90 : 0;
+    delay(200);
+  }
+}
+
+void move_body_left_right(){
+  int angle = 45;
+  for(int i = 0; i < 4; i++){
+    franklin.write(angle, 200);
+    aretha.write(angle, 200);
+    angle = (angle == 45) ? 135 : 0;
+    delay(200);
+  }
 }
 
 /*******************************************************/

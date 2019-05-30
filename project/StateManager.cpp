@@ -21,31 +21,6 @@ float sample, bass_value, envelope, beat_value;
    Look at the 'enum state' for a description of the different states.
 */
 void update_state() {
-  float value = (float)analogRead(AUDIO_PIN) - 81.f;
-
-  if (is_music_off(value, true)) {
-    STATE = NO_MUSIC;
-  } else { // then just beat!
-    STATE = BEAT;
-  }
-}
-
-/**
-   Analyse the audio in order to undestand whether there is a beat or not.
-   In case we detect a beat, we make the robot move.
-*/
-void update_beat() {
-
-  static unsigned long last_update_time = micros();
-  static int i = 0; // keep track of the number of samples seen
-  static unsigned long last_beat_time = 0; // this stores the last computed beat time
-
-  // don't do anything if not enough time has passed
-  if (last_update_time + SAMPLE_PERIOD > micros()) {
-    return;
-  }
-  last_update_time = micros();
-
   // Read ADC and center so ~81
   sample = (float)analogRead(AUDIO_PIN) - 81.f;
 
@@ -57,8 +32,34 @@ void update_beat() {
   }
   envelope = envelopeFilter(bass_value);
 
-  float voice_value = voiceFilter(sample);
-  is_high_pitch(voice_value);
+  Serial.print(sample);
+  Serial.print(" ");
+  Serial.println(envelope);
+
+  if (is_music_off(envelope, true)) {
+    STATE = NO_MUSIC;
+  } else if(is_high_pitch(envelope)){
+    Serial.println("HIGH PITCH DO SOMETHING!");
+  } else { // then just beat!
+    STATE = BEAT;
+  }
+}
+
+/**
+   Analyse the audio in order to undestand whether there is a beat or not.
+   In case we detect a beat, we make the robot move.
+*/
+void update_beat(float envelope) {
+
+  static unsigned long last_update_time = micros();
+  static int i = 0; // keep track of the number of samples seen
+  static unsigned long last_beat_time = 0; // this stores the last computed beat time
+
+  // don't do anything if not enough time has passed
+  if (last_update_time + SAMPLE_PERIOD > micros()) {
+    return;
+  }
+  last_update_time = micros();
 
   // Every 200 samples (25hz) filter the envelope
   if (i == 200) {
@@ -146,10 +147,6 @@ bool is_music_off(float value, bool b_update) {
   }
 }
 
-/***********************************************************/
-/**
-   @deprecated
-*/
 bool is_high_pitch(int value) {
   // TODO: keep track of the last local and global values and compare the two moving averages
   // keep track of the last read values
@@ -178,16 +175,15 @@ bool is_high_pitch(int value) {
   local_sum = local_sum + value - last_local_values[lv_counter]; // cycling sum (add the most recent, remove the last one)
   global_sum = global_sum + value - last_values[gv_counter]; // cycling sum (add the most recent, remove the last one)
 
-//  float local_avg = (float)local_sum / LOCAL_P_AVG_N;
-//  float global_avg = (float)global_sum / GLOBAL_P_AVG_N;
-
+  float avg_difference = ((float)local_sum / LOCAL_P_AVG_N) - ((float)global_sum / GLOBAL_P_AVG_N);
+  
   // if the pitch local average exceeds the global one, we are probably perceiving a "long high pitch"
-  if (local_sum > global_sum) {
+  if (avg_difference > HIGH_PITCH_THRESHOLD) {
     return true;
   }
   return false;
 }
-
+/***********************************************************/
 /**
    @deprecated
 */

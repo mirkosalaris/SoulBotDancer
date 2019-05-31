@@ -61,7 +61,7 @@ const unsigned long int COMPUTING_TIME = 4500000; // 4.5 sec
 
 
 /*** GLOBAL VARIABLES ***/
-enum state {NO_MUSIC, COMPUTING, BEAT, HIGH_PITCH};
+enum state {NO_MUSIC, INTERACTING, BEAT, HIGH_PITCH};
 /* the state in which we are at the current moment. 
  * - NO_MUSIC:  when the music is off (and we have to interact with the user)
  * - COMPUTING: not mandatory to use. When the music has been turned on and

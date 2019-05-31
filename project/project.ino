@@ -1,9 +1,9 @@
 /*
- * This is the main file for the SoulBotDancer project.
- * 
- * The setup function initializes the electronical part and set a few parameters.
- * The loop function continuosly update the state of the robot and triggers the correspondent action.
- */
+   This is the main file for the SoulBotDancer project.
+
+   The setup function initializes the electronical part and set a few parameters.
+   The loop function continuosly update the state of the robot and triggers the correspondent action.
+*/
 
 #include <Arduino.h>
 #include "Commons.h"
@@ -32,27 +32,25 @@ void setup() {
   STATE = NO_MUSIC;
 
   // Set ADC to 77khz, max for 10bit
-  sbi(ADCSRA,ADPS2);
-  cbi(ADCSRA,ADPS1);
-  cbi(ADCSRA,ADPS0);
+  sbi(ADCSRA, ADPS2);
+  cbi(ADCSRA, ADPS1);
+  cbi(ADCSRA, ADPS0);
 
   Serial.begin(9600);
 
-  
-
   // Set-up audio module. All pins should be High except when the emmit sound.
-  pinMode(SPEAK_PIN_0,OUTPUT);
-  pinMode(SPEAK_PIN_1,OUTPUT);
-  pinMode(SPEAK_PIN_2,OUTPUT);
-  pinMode(SPEAK_PIN_3,OUTPUT);
-  
+  pinMode(SPEAK_PIN_0, OUTPUT);
+  pinMode(SPEAK_PIN_1, OUTPUT);
+  pinMode(SPEAK_PIN_2, OUTPUT);
+  pinMode(SPEAK_PIN_3, OUTPUT);
+
   digitalWrite(SPEAK_PIN_0, HIGH);
   digitalWrite(SPEAK_PIN_1, HIGH);
   digitalWrite(SPEAK_PIN_2, HIGH);
   digitalWrite(SPEAK_PIN_3, HIGH);
-  
 
-  // Set-up the movement motors 
+
+  // Set-up the movement motors
   franklin.attach(FRANKLIN_PIN);
   franklin_arms.attach(FRANKLIN_ARMS_PIN);
   aretha.attach(ARETHA_PIN);
@@ -60,24 +58,23 @@ void setup() {
   franklin.write(90);
   franklin_arms.write(0);
   aretha.write(90);
-  aretha_arms.write(0); 
+  aretha_arms.write(0);
+
+  delay(500);
 
   // everything is set-up.
   emmit_sound(SPEAK_PIN_0);
 }
 
 /* ***** LOOP ***** */
-state previous_state = NO_MUSIC;
 void loop() {
-    update_state(); // let's check what we have to do (wait? follow the beat? ...)
-    Serial.println(STATE);
+  update_state(); // let's check what we have to do (wait? follow the beat? ...)
 
+  if (STATE == BEAT) {
+    update_beat(envelope);
 
-    if (STATE == BEAT) {
-      update_beat(envelope);
-      
-    } else if (STATE == NO_MUSIC) {
-      no_music_action();
-    }
-    
+  } else if (STATE == NO_MUSIC) {
+    no_music_action();
+  }
+
 }

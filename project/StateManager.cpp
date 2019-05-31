@@ -14,7 +14,6 @@
    Avoid redeclaring them everytime
 */
 float sample, bass_value, envelope, beat_value;
-
 /*
    Change the state according to what is perceived in input.
    The possible states are NO_MUSIC, BEAT.
@@ -31,17 +30,12 @@ void update_state() {
     bass_value = -bass_value;
   }
   envelope = envelopeFilter(bass_value);
-//
-//  Serial.print(sample);
-//  Serial.print(" ");
-//  Serial.println(envelope);
 
   if (is_music_off(sample, true)) {
     STATE = NO_MUSIC;
-  }
-  else if(is_high_pitch(envelope)){
+  } else if(is_high_pitch(envelope)){
 //    Serial.println("HIGH PITCH DO SOMETHING!");
-  } else { // then just beat!
+  } else { // if the state is not interacting, we can analyze the music.
     STATE = BEAT;
   }
 }
@@ -93,7 +87,7 @@ void update_beat(float envelope) {
 /**
    Check whether the music is OFF or ON.
    Parameters:
-     value: the sound value
+     value: the sound value if(STATE != INTERACTING) 
      b_update: true implies that calculation or update on the state will be performed
 
    Return:
@@ -112,16 +106,10 @@ bool is_music_off(float value, bool b_update) {
   // avoid summing and substracting the value every time.
   // if that is the case, just return the current state:
   // if the music is on, returns FALSE, if not, TRUE.
-
   if (value < 0) {
     return (STATE == NO_MUSIC);
   }
-      
-      //Serial.print(sample);
-      //Serial.print(" ");
-      //Serial.println(NO_MUSIC_THRESH);
-      //Serial.print(" ");
-
+  
   // do computation only if requested
   if (b_update) {
     unsigned long int current_time = micros();
@@ -148,9 +136,7 @@ bool is_music_off(float value, bool b_update) {
   // NOTE that the function is called is_music_OFF.
     //Serial.println(sum/NO_MUSIC_AVG_N);
   if (sum / NO_MUSIC_AVG_N >= NO_MUSIC_THRESH) {
-
     return false;
-
   } else {
     // if the average is above the threshold, it means that the music is OFF.
     return true;
@@ -192,40 +178,4 @@ bool is_high_pitch(int value) {
     return true;
   }
   return false;
-}
-
-bool is_interacting(){
-  int read_1 = digitalRead(SPEAK_PIN_1);
-  int read_2 = digitalRead(SPEAK_PIN_2);
-  byte pinOn = read_1 && read_2;
-  Serial.print(" result ");
-  Serial.println(pinOn);
-  return (pinOn == 0);
-}
-/***********************************************************/
-/**
-   @deprecated
-*/
-bool is_computing(int value) {
-  /* TODO:
-      - continue to return true until we have a defined beat
-
-    static boolean started = false;
-
-    static unsigned long start_time = 0;
-
-    // if the music is NOT off and we have NOT already noticed it
-    if (!is_music_off(value, false) && !started) {
-    started = true;
-    start_time = micros();
-    }
-
-    // the time has passed (4.5 sec)
-    if (micros() - start_time > COMPUTING_TIME) {
-    // reset
-    started = false;
-    return false;
-    } else {
-    return true;
-    } */
 }

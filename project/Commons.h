@@ -8,8 +8,8 @@
 #include <VarSpeedServo.h>
 
 /*** ARDUINO SCHEMATICS ***/
-const int FRANKLIN_PIN = 9;
-const int FRANKLIN_ARMS_PIN = 10;
+const int FRANKLIN_PIN = 8;
+const int FRANKLIN_ARMS_PIN = 9;
 const int ARETHA_PIN = 11;
 const int ARETHA_ARMS_PIN = 12;
 
@@ -17,9 +17,9 @@ const int AUDIO_PIN = 0;
 
 // audio fx module
 const int SPEAK_PIN_0 = 22;
-const int SPEAK_PIN_1 = 24;
-const int SPEAK_PIN_2 = 26;
-const int SPEAK_PIN_3 = 28;
+const int SPEAK_PIN_1 = 26;
+const int SPEAK_PIN_2 = 30;
+const int SPEAK_PIN_3 = 34;
 
 // ultrasonic sensor pins
 const int TRIGGER_PIN = 51;

@@ -51,9 +51,9 @@ void beat_action() {
     last_command_time = current_time;
     
     if (dir == up) {
-      franklin_arms.write(MAX_ANGLE);
+      franklin_arms.write(MAX_BEAT_ANGLE);
     } else { // dir == down
-      franklin_arms.write(MIN_ANGLE);
+      franklin_arms.write(MIN_BEAT_ANGLE);
     }
   }
 }
@@ -70,28 +70,45 @@ void computing_action() {
 
   // time from when the movement started
   unsigned long int mov_time = millis() - start_time;
-
-  //Stretching movements for robot aretha
-  //The robot rotates  0-90-0 and then 180-90-180 with rising and lowering hands
-
-  if (mov_time < TIME1)
-   aretha.write(0);
-  else if (mov_time < TIME2)
-    aretha.write(90);
-  else if (mov_time < TIME3)
-    aretha.write(0);
-  else if (mov_time < TIME4)
-  {
-    aretha_arms.write(120); //rising hands
-    aretha.write(180);
+  
+  // Franklin goes 
+  // Franklin movement
+  if (mov_time < F_TIME1) {
+    franklin.write(135);
+  } else if (mov_time < F_TIME2) {
+    franklin.write(45);
+  } else if (mov_time < F_TIME3) {
+    franklin_arms.write(120); // rising hands
+    franklin.write(90);
+  } else if (mov_time < F_TIME4) {
+    franklin.write(0);
+  } else if (mov_time < F_TIME5) {
+    franklin_arms.write(MIN_BEAT_ANGLE);
+    franklin.write(180);
+  } else if (mov_time < F_TIME6) {
+    franklin.write(45);
+  } else {
+    franklin_arms.write(MIN_BEAT_ANGLE); // lowering hands
+    franklin.write(90);
   }
-  else if (mov_time < TIME5)
+
+  // Aretha rotates  0-90-0 and then 180-90-180 with rising and lowering hands
+  // Aretha movement
+  if (mov_time < A_TIME1) {
+    aretha.write(0);
+  } else if (mov_time < A_TIME2) {
     aretha.write(90);
-  else if (mov_time < TIME6)
+  } else if (mov_time < A_TIME3) {
+    aretha.write(0);
+  } else if (mov_time < A_TIME4) {
+    aretha_arms.write(120); // rising hands
     aretha.write(180);
-  else
-  {
-    aretha_arms.write(0); //lowering hands
+  } else if (mov_time < A_TIME5) {
+    aretha.write(90);
+  } else if (mov_time < A_TIME6) {
+    aretha.write(180);
+  } else {
+    aretha_arms.write(MIN_BEAT_ANGLE); // lowering hands
     aretha.write(90);
   }
 }

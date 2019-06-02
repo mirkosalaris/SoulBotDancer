@@ -34,16 +34,25 @@ const int NO_MUSIC_AVG_N = 20;
 const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
 
 /*** MOVEMENT ***/
-const int MAX_ANGLE = 90;  // we can adjust this for aesthetic reasons
-const int MIN_ANGLE = 0;    // we can adjust this for aesthetic reasons
+const int MAX_ANGLE = 180;        // Max angle given from physical constraints, used for high pitch
+const int MAX_BEAT_ANGLE = 90;    // we can adjust this for aesthetic reasons
+const int MIN_BEAT_ANGLE = 0;    // we can adjust this for aesthetic reasons
 const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
 
-const int TIME1 = 1000; // 1 sec
-const int TIME2 = 1500;
-const int TIME3 = 2000;
-const int TIME4 = 3000;
-const int TIME5 = 3500;
-const int TIME6 = 4000;
+const int A_TIME1 = 1000; // 1 sec
+const int A_TIME2 = 1500;
+const int A_TIME3 = 2000;
+const int A_TIME4 = 3000;
+const int A_TIME5 = 3500;
+const int A_TIME6 = 4000;
+
+const int F_TIME1 = 800; // 0.8 sec
+const int F_TIME2 = 1300;
+const int F_TIME3 = 1800;
+const int F_TIME4 = 3000;
+const int F_TIME5 = 3700;
+const int F_TIME6 = 4200;
+
 const unsigned long int COMPUTING_TIME = 4500000; // 4.5 sec
 
 

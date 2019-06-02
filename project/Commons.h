@@ -16,10 +16,10 @@ const int ARETHA_ARMS_PIN = 12;
 const int AUDIO_PIN = 0;
 
 // audio fx module
-const int SPEAK_PIN_0 = 22;
-const int SPEAK_PIN_1 = 26;
-const int SPEAK_PIN_2 = 30;
-const int SPEAK_PIN_3 = 34;
+const int SPEAK_PIN_0 = 22; // applauding
+const int SPEAK_PIN_2 = 26; // "come to me" and "come closer to me"
+const int SPEAK_PIN_4 = 30; // "come on boy, see above me" and "come on come on"
+const int SPEAK_PIN_7 = 34; // "let's get it on" and "let's the music play"
 
 // ultrasonic sensor pins
 const int TRIGGER_PIN = 51;

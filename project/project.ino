@@ -40,14 +40,14 @@ void setup() {
 
   // Set-up audio module. All pins should be High except when the emmit sound.
   pinMode(SPEAK_PIN_0, OUTPUT);
-  pinMode(SPEAK_PIN_1, OUTPUT);
   pinMode(SPEAK_PIN_2, OUTPUT);
-  pinMode(SPEAK_PIN_3, OUTPUT);
+  pinMode(SPEAK_PIN_4, OUTPUT);
+  pinMode(SPEAK_PIN_7, OUTPUT);
 
   digitalWrite(SPEAK_PIN_0, HIGH);
-  digitalWrite(SPEAK_PIN_1, HIGH);
   digitalWrite(SPEAK_PIN_2, HIGH);
-  digitalWrite(SPEAK_PIN_3, HIGH);
+  digitalWrite(SPEAK_PIN_4, HIGH);
+  digitalWrite(SPEAK_PIN_7, HIGH);
 
 
   // Set-up the movement motors

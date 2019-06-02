@@ -107,18 +107,17 @@ void no_music_action() {
 
   if (distance > 200) {
     //Serial.println("distance > 200");
-    emmit_sound(SPEAK_PIN_1);
-    // wait 3 seconds to do any interaction again
+    emmit_sound(SPEAK_PIN_2);
   } else if (distance > 30) {
     //Serial.println("distance > 30");
     // come closer to me sound
-    emmit_sound(SPEAK_PIN_2);
+    emmit_sound(SPEAK_PIN_4);
     // move the arms up and down.
     move_arms_up_down();
   } else if (distance <= 30) {
     //Serial.println("distance <= 30");
     // let the music play sound
-    emmit_sound(SPEAK_PIN_3);
+    emmit_sound(SPEAK_PIN_7);
     // move the body left and right
     move_body_left_right();
   }
@@ -150,9 +149,11 @@ void move_body_left_right() {
   for (int i = 0; i < 4; i++) {
     franklin.write(angle, 200);
     aretha.write(angle, 200);
-    angle = (angle == 45) ? 135 : 0;
+    angle = (angle == 45) ? 135 : 45;
     delay(200);
   }
+  franklin.write(90, 200);
+  aretha.write(90, 200);
 }
 
 /*******************************************************/

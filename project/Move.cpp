@@ -59,6 +59,7 @@ void beat_action(unsigned long int beat_time, int arms_speed) {
 
     // Move the right and left (body)
     if (dir == up) {
+      digitalWrite(LED_PIN, HIGH);
       franklin_arms.write(MAX_ARMS_ANGLE, arms_speed);
       aretha_arms.write(MAX_ARMS_ANGLE, arms_speed, true);
       franklin_arms.write(0, arms_speed);
@@ -67,6 +68,7 @@ void beat_action(unsigned long int beat_time, int arms_speed) {
       // wait until the end of the movement.
       aretha.write(MAX_BODY_ANGLE, body_speed, true);
     } else { // move the arms down
+      digitalWrite(LED_PIN, LOW);
       franklin_arms.write(MAX_ARMS_ANGLE, arms_speed);
       aretha_arms.write(MAX_ARMS_ANGLE, arms_speed, true);
       franklin_arms.write(MIN_ARMS_ANGLE, arms_speed);

@@ -42,10 +42,13 @@ void setup() {
   pinMode(SPEAK_PIN_0, OUTPUT);
   pinMode(SPEAK_PIN_2, OUTPUT);
   pinMode(SPEAK_PIN_7, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
 
   digitalWrite(SPEAK_PIN_0, HIGH);
   digitalWrite(SPEAK_PIN_2, HIGH);
   digitalWrite(SPEAK_PIN_7, HIGH);
+  digitalWrite(LED_PIN, LOW);
+
 
   // Set-up the movement motors
   franklin.attach(FRANKLIN_PIN);
@@ -73,6 +76,9 @@ void loop() {
 
     // to be able to turn off the robot with known positions
     reset_positions();
+
+    // make sure the LED are turned off
+    digitalWrite(LED_PIN, LOW);
   }
   
   

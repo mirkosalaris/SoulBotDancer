@@ -51,6 +51,7 @@ const int MAX_BODY_ANGLE = 170;
 const int MIN_BODY_ANGLE = 10;
 const int MAX_ARMS_ANGLE = 55; 
 const int MIN_ARMS_ANGLE = 0;
+const int LED_PIN = 22;
 
 /*** GLOBAL VARIABLES ***/
 enum state {NO_MUSIC, BEAT, HIGH_PITCH};

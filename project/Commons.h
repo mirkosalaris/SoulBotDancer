@@ -33,12 +33,6 @@ const unsigned long MIN_BEAT_DISTANCE = 700000; // 500ms == 500 000us
 const unsigned long MAX_BEAT_DISTANCE = 1000000; // 980ms == 980 000us
 const int BEAT_AVG_N = 30; // number of beats distances from which to compute the avg. distance
 
-/*** HIGH PITCH CALCULATION ***/
-const int LOCAL_P_AVG_N = 100;    // number of values to consider for the computation of the "local" pitch moving average
-const int GLOBAL_P_AVG_N = 200;  // number of values to consider for the computation of the "global" pitch moving average
-const float HIGH_PITCH_THRESHOLD = 5; // threshold for high pitch difference
-
-
 /** NO MUSIC CALCULATION **/
 const unsigned long NO_MUSIC_ACTION_WAIT_TIME = 7500; // 7500ms = 71.5s
 const unsigned long NO_MUSIC_OVERLAP_TIME = 3500; // 3500ms = 3.5s
@@ -54,13 +48,11 @@ const int MIN_ARMS_ANGLE = 0;
 const int LED_PIN = 22;
 
 /*** GLOBAL VARIABLES ***/
-enum state {NO_MUSIC, BEAT, HIGH_PITCH};
+enum state {NO_MUSIC, BEAT};
 /* the state in which we are at the current moment. 
  * - NO_MUSIC:  when the music is off (and we have to interact with the user)
  * - BEAT:      the state in which the robot will be for most of the time.
  *              In this state the robot is just following the rhythm with its arms/body
- * - HIGH_PITCH: when we detect an high pitch and we change the robot behavior,
- *               suspending the usual "beat following" behavior
  */
 
 extern state STATE;

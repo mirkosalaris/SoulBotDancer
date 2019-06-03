@@ -141,11 +141,3 @@ void move_body_left_right() {
   franklin.write(90, 200);
   aretha.write(90, 200);
 }
-
-/*******************************************************/
-/**
-   @deprecated
-*/
-void high_pitch_action() {
-  // TODO: raise the arms
-}

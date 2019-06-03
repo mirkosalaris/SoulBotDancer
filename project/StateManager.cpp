@@ -33,8 +33,6 @@ void update_state() {
 
   if (is_music_off(sample, true)) {
     STATE = NO_MUSIC;
-  } else if(is_high_pitch(envelope)){
-//    Serial.println("HIGH PITCH DO SOMETHING!");
   } else { // if the state is not interacting, we can analyze the music.
     STATE = BEAT;
   }
@@ -141,42 +139,4 @@ bool is_music_off(float value, bool b_update) {
     // if the average is above the threshold, it means that the music is OFF.
     return true;
   }
-}
-
-bool is_high_pitch(int value) {
-  return false;
-  // TODO: keep track of the last local and global values and compare the two moving averages
-  // keep track of the last read values
-  static float last_local_values[LOCAL_P_AVG_N];
-  static float last_values[GLOBAL_P_AVG_N];
-
-  static int local_sum = 0;
-  static int global_sum = 0;
-
-  // the next 5 lines trick is to avoid shifting the array
-  static int lv_counter = 0;
-  last_local_values[lv_counter] = value;
-  lv_counter++;
-  if (lv_counter >= LOCAL_P_AVG_N) { // reset if exceeds array boundary
-    lv_counter = 0;
-  }
-
-  // the next 5 lines trick is to avoid shifting the array
-  static int gv_counter = 0;
-  last_values[gv_counter] = value;
-  gv_counter++;
-  if (gv_counter >= GLOBAL_P_AVG_N) { // reset if exceeds array boundary
-    gv_counter = 0;
-  }
-
-  local_sum = local_sum + value - last_local_values[lv_counter]; // cycling sum (add the most recent, remove the last one)
-  global_sum = global_sum + value - last_values[gv_counter]; // cycling sum (add the most recent, remove the last one)
-
-  float avg_difference = ((float)local_sum / LOCAL_P_AVG_N) - ((float)global_sum / GLOBAL_P_AVG_N);
-  
-  // if the pitch local average exceeds the global one, we are probably perceiving a "long high pitch"
-  if (avg_difference > HIGH_PITCH_THRESHOLD) {
-    return true;
-  }
-  return false;
 }

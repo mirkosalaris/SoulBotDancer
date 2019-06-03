@@ -41,24 +41,19 @@ void setup() {
   // Set-up audio module. All pins should be High except when the emmit sound.
   pinMode(SPEAK_PIN_0, OUTPUT);
   pinMode(SPEAK_PIN_2, OUTPUT);
-  pinMode(SPEAK_PIN_4, OUTPUT);
   pinMode(SPEAK_PIN_7, OUTPUT);
 
   digitalWrite(SPEAK_PIN_0, HIGH);
   digitalWrite(SPEAK_PIN_2, HIGH);
-  digitalWrite(SPEAK_PIN_4, HIGH);
   digitalWrite(SPEAK_PIN_7, HIGH);
-
 
   // Set-up the movement motors
   franklin.attach(FRANKLIN_PIN);
   franklin_arms.attach(FRANKLIN_ARMS_PIN);
   aretha.attach(ARETHA_PIN);
   aretha_arms.attach(ARETHA_ARMS_PIN);
-  franklin.write(90);
-  franklin_arms.write(0);
-  aretha.write(90);
-  aretha_arms.write(0);
+  
+  reset_positions();
 
   delay(500);
 
@@ -75,6 +70,17 @@ void loop() {
 
   } else if (STATE == NO_MUSIC) {
     no_music_action();
-  }
 
+    // to be able to turn off the robot with known positions
+    reset_positions();
+  }
+  
+  
+}
+
+void reset_positions() {
+  franklin.write(90);
+  franklin_arms.write(0);
+  aretha.write(90);
+  aretha_arms.write(0);
 }

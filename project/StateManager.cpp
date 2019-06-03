@@ -87,7 +87,7 @@ void update_beat(float envelope) {
 /**
    Check whether the music is OFF or ON.
    Parameters:
-     value: the sound value if(STATE != INTERACTING) 
+     value: the sound value
      b_update: true implies that calculation or update on the state will be performed
 
    Return:
@@ -144,6 +144,7 @@ bool is_music_off(float value, bool b_update) {
 }
 
 bool is_high_pitch(int value) {
+  return false;
   // TODO: keep track of the last local and global values and compare the two moving averages
   // keep track of the last read values
   static float last_local_values[LOCAL_P_AVG_N];

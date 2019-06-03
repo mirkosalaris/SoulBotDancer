@@ -59,21 +59,21 @@ void beat_action(unsigned long int beat_time, int arms_speed) {
 
     // Move the right and left (body)
     if (dir == up) {
-      franklin_arms.write(MID_ANGLE, arms_speed);
-      aretha_arms.write(MID_ANGLE, arms_speed, true);
+      franklin_arms.write(MAX_ARMS_ANGLE, arms_speed);
+      aretha_arms.write(MAX_ARMS_ANGLE, arms_speed, true);
       franklin_arms.write(0, arms_speed);
       aretha_arms.write(0, arms_speed);
-      franklin.write(MAX_ANGLE, body_speed);
+      franklin.write(MAX_BODY_ANGLE, body_speed);
       // wait until the end of the movement.
-      aretha.write(MAX_ANGLE, body_speed, true);
+      aretha.write(MAX_BODY_ANGLE, body_speed, true);
     } else { // move the arms down
-      franklin_arms.write(MID_ANGLE, arms_speed);
-      aretha_arms.write(MID_ANGLE, arms_speed, true);
-      franklin_arms.write(0, arms_speed);
-      aretha_arms.write(0, arms_speed);
-      franklin.write(MIN_ANGLE, body_speed);
+      franklin_arms.write(MAX_ARMS_ANGLE, arms_speed);
+      aretha_arms.write(MAX_ARMS_ANGLE, arms_speed, true);
+      franklin_arms.write(MIN_ARMS_ANGLE, arms_speed);
+      aretha_arms.write(MIN_ARMS_ANGLE, arms_speed);
+      franklin.write(MIN_BODY_ANGLE, body_speed);
       // wait until the end of the movement.
-      aretha.write(MIN_ANGLE, body_speed, true);
+      aretha.write(MIN_BODY_ANGLE, body_speed, true);
     }
   }
 }
@@ -99,49 +99,33 @@ float get_user_distance() {
     - If there is someone in front of the robot, Let's play the music!
 */
 void no_music_action() {
-  unsigned long start_time = millis();
+  static unsigned long start_interaction_time = 0;
   unsigned long current_time = millis();
 
+  // we don't want to interact to often, let's wait
+  if (current_time - start_interaction_time < NO_MUSIC_ACTION_WAIT_TIME) {
+    return;
+  }
+  start_interaction_time = current_time;
+  
   // the maximum range of the HC-SR04 is 4 meters
   float distance = get_user_distance();
 
-  if (distance > 200) {
-    //Serial.println("distance > 200");
+  if (distance > 50) {
     emmit_sound(SPEAK_PIN_2);
-  } else if (distance > 30) {
-    //Serial.println("distance > 30");
-    // come closer to me sound
-    emmit_sound(SPEAK_PIN_4);
-    // move the arms up and down.
-    move_arms_up_down();
-  } else if (distance <= 30) {
-    //Serial.println("distance <= 30");
-    // let the music play sound
-    emmit_sound(SPEAK_PIN_7);
-    // move the body left and right
-    move_body_left_right();
+  } else /*if (distance <= 50)*/ {
+    emmit_sound(SPEAK_PIN_7); // let the music play sound
+    move_body_left_right(); // move the body left and right
   }
 
-  // (active) wait 5 seconds before continue.
-  while (current_time - start_time < 5000) {
-    current_time = millis();
-  }
+  // block for few seconds (prevent listening to our own voice)
+  delay(NO_MUSIC_OVERLAP_TIME);
 }
 
 void emmit_sound(int pin_number) {
   digitalWrite(pin_number, LOW);
   delay(250);
   digitalWrite(pin_number, HIGH);
-}
-
-void move_arms_up_down() {
-  int angle = 0;
-  for (int i = 0; i < 4; i++) {
-    franklin_arms.write(angle, 255);
-    aretha_arms.write(angle, 255);
-    angle = (angle == 0) ? 90 : 0;
-    delay(200);
-  }
 }
 
 void move_body_left_right() {

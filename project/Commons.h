@@ -16,10 +16,9 @@ const int ARETHA_ARMS_PIN = 12;
 const int AUDIO_PIN = 0;
 
 // audio fx module
-const int SPEAK_PIN_0 = 22; // applauding
-const int SPEAK_PIN_2 = 26; // "come to me" and "come closer to me"
-const int SPEAK_PIN_4 = 30; // "come on boy, see above me" and "come on come on"
-const int SPEAK_PIN_7 = 34; // "let's get it on" and "let's the music play"
+const int SPEAK_PIN_0 = 26; // applauding
+const int SPEAK_PIN_2 = 30; // "come to me" and "come closer to me"
+const int SPEAK_PIN_7 = 38; // "let's get it on" and "let's the music play"
 
 // ultrasonic sensor pins
 const int TRIGGER_PIN = 51;
@@ -41,31 +40,22 @@ const float HIGH_PITCH_THRESHOLD = 5; // threshold for high pitch difference
 
 
 /** NO MUSIC CALCULATION **/
-const float NO_MUSIC_THRESH = 1.5;
+const unsigned long NO_MUSIC_ACTION_WAIT_TIME = 7500; // 7500ms = 71.5s
+const unsigned long NO_MUSIC_OVERLAP_TIME = 3500; // 3500ms = 3.5s
+const float NO_MUSIC_THRESH = 4;
 const int NO_MUSIC_AVG_N = 10;
 const unsigned long int NO_MUSIC_SAMPLE_PERIOD = 100000; //in us, so: 10hz
 
 /*** MOVEMENT ***/
-const int MAX_ANGLE = 170;  // we can adjust this for aesthetic reasons
-const int MIN_ANGLE = 10;    // we can adjust this for aesthetic reasons
-const int MID_ANGLE = 55; 
-const unsigned long int MOVEMENT_TIME = 500000; // 500ms == 500 000us
-
-const int TIME1 = 1000; // 1 sec
-const int TIME2 = 1500;
-const int TIME3 = 2000;
-const int TIME4 = 3000;
-const int TIME5 = 3500;
-const int TIME6 = 4000;
-const unsigned long int COMPUTING_TIME = 4500000; // 4.5 sec
-
+const int MAX_BODY_ANGLE = 170;
+const int MIN_BODY_ANGLE = 10;
+const int MAX_ARMS_ANGLE = 55; 
+const int MIN_ARMS_ANGLE = 0;
 
 /*** GLOBAL VARIABLES ***/
-enum state {NO_MUSIC, INTERACTING, BEAT, HIGH_PITCH};
+enum state {NO_MUSIC, BEAT, HIGH_PITCH};
 /* the state in which we are at the current moment. 
  * - NO_MUSIC:  when the music is off (and we have to interact with the user)
- * - COMPUTING: not mandatory to use. When the music has been turned on and
- *              we are waiting to understand what to do.
  * - BEAT:      the state in which the robot will be for most of the time.
  *              In this state the robot is just following the rhythm with its arms/body
  * - HIGH_PITCH: when we detect an high pitch and we change the robot behavior,
